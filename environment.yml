@@ -1,9 +1,10 @@
-name: gaussian_splatting
+name: splat
 channels:
   - nvidia
   - pytorch
   - defaults
   - conda-forge
+  # - menpo
 dependencies:
   - python=3.8
   - pip
@@ -12,8 +13,17 @@ dependencies:
   - pytorch
   - torchaudio
   - torchvision
-  - pytorch-cuda=12.1
-  - nvidia::cuda-toolkit=12.1
+  - nvidia::cuda-toolkit=12.3
+  # - conda-forge::assimp
+  # - conda-forge::libboost
+  # - conda-forge::gtk3
+  # - conda-forge::glew
+  # - menpo::glfw3
+  # - conda-forge::av
+  # - conda-forge::eigen
+  # - conda-forge::libboost
+  # - libxxf86vm-cos6-x86_64
+  # - conda-forge::embree
 
   - pip:
     - submodules/diff-gaussian-rasterization

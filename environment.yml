@@ -4,7 +4,7 @@ channels:
   - pytorch
   - defaults
   - conda-forge
-  # - menpo
+
 dependencies:
   - python=3.8
   - pip
@@ -13,17 +13,16 @@ dependencies:
   - pytorch
   - torchaudio
   - torchvision
-  - nvidia::cuda-toolkit=12.3
-  # - conda-forge::assimp
-  # - conda-forge::libboost
-  # - conda-forge::gtk3
-  # - conda-forge::glew
-  # - menpo::glfw3
-  # - conda-forge::av
-  # - conda-forge::eigen
-  # - conda-forge::libboost
-  # - libxxf86vm-cos6-x86_64
-  # - conda-forge::embree
+  # Change to version number that best fits your CUDA version found from nvidia-smi
+  # There can be a compilation problem if nvidia-cuda-toolkit is already installed in your system
+  # See if 'nvcc -V' gives you a version # in the command line
+  - pytorch::pytorch-cuda=12.1
+  - nvidia::cuda-nvcc=12.1
+  - nvidia::cuda-toolkit=12.1
+  - nvidia::cuda-runtime=12.1
+  - conda-forge::glm
+  - conda-forge::glew
+  - conda-forge::mesa
 
   - pip:
     - submodules/diff-gaussian-rasterization

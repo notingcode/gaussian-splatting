@@ -1,0 +1,7 @@
+pytorch=*=*cuda11.7*
+torchvision=*=*cu117*
+torchaudio=*=*cu117*
+cudatoolkit=11.7
+plyfile
+tqdm
+pip

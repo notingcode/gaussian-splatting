@@ -1,4 +1,4 @@
-**
+*
 !arguments
 !assets
 !colmap-pcd
@@ -15,7 +15,6 @@
 !*.py
 !*.md
 **__pycache__**
-*.pyc
 diff_rasterization/diff_rast.egg-info
 diff_rasterization/dist
 tensorboard_3d

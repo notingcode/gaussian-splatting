@@ -4,15 +4,8 @@ FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG user
-ARG uid
-ARG gid
 
 ENV USERNAME ${user}
-
-RUN useradd -m ${USERNAME} && \
-    echo "${USERNAME}:${USERNAME}" | chpasswd && \
-    usermod -s /bin/bash ${USERNAME} && \
-    usermod -u ${uid} ${USERNAME}
 
 ENV PATH="/usr/local/cuda-11.7/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda-11.7/lib64:${LD_LIBRARY_PATH}"
@@ -28,7 +21,7 @@ RUN apt-get update \
     git gcc-12 g++-12 \
     ninja-build build-essential \
     wget bzip2 tar\
-    libglew-dev libglm-dev libassimp-dev \
+    libglew-dev libglm-dev libassimp-dev libglut3-dev \
     libboost-all-dev libgtk-3-dev \
     libopencv-dev libglfw3-dev libatlas-base-dev \
     libavdevice-dev libavcodec-dev \
@@ -54,9 +47,6 @@ RUN wget http://ceres-solver.org/ceres-solver-2.1.0.tar.gz \
     && cmake ../ceres-solver-2.1.0 -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_CUDA_ARCHITECTURES=native \
     && make -j3 \
     && make test \
-    # Optionally install Ceres, it can also be exported using CMake which
-    # allows Ceres to be used without requiring installation, see the documentation
-    # for the EXPORT_BUILD_DIR option for more information.
     && make install
 
 RUN rm -rf ceres-solver-2.1.0 && rm ceres-solver-2.1.0.tar.gz
@@ -76,13 +66,10 @@ RUN git clone https://github.com/notingcode/gaussian-splatting.git --recursive
 
 WORKDIR /home/${user}/gaussian-splatting
 
-RUN rm -rf docker
-
 WORKDIR /home/${user}/gaussian-splatting/colmap-pcd
 
-RUN mkdir build
-
-RUN cd build \
+RUN mkdir build \
+    && cd build \
     && cmake .. -DCUDA_ENABLED=ON -DCMAKE_CUDA_ARCHITECTURES=native \
     && make -j \
     && make install
@@ -93,16 +80,22 @@ RUN cd SIBR_viewers \
     && cmake -Bbuild . -DCMAKE_BUILD_TYPE=Release -GNinja \
     && cmake --build build -j24 --target install
 
+# Gaussian-splatting conda env setup
+
+WORKDIR /home/${user}/gaussian-splatting
+
+RUN rm -rf docker
+RUN conda install -y --file requirements_conda.txt -c pytorch -c nvidia -c defaults -c conda-forge
+RUN pip install ./submodules/diff-gaussian-rasterization
+RUN pip install ./submodules/simple-knn
+
+RUN pip cache purge
+RUN conda clean -a
+
 # Reset DEBIAN_FRONTEND to default
 ENV DEBIAN_FRONTEND=dialog
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Gaussian-splatting conda env setup
-
-RUN conda install -y --file requirements_conda.txt -c pytorch -c nvidia -c defaults -c conda-forge
-RUN pip install ./submodules/diff-gaussian-rasterization
-RUN pip install ./submodules/simple-knn
-
-USER ${user}
+SHELL [ "/bin/bash", "-c" ]

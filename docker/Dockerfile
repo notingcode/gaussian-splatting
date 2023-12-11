@@ -5,8 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ARG user
 
-ENV USERNAME ${user}
-
+# Set up CUDA environment variables
 ENV PATH="/usr/local/cuda-11.7/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda-11.7/lib64:${LD_LIBRARY_PATH}"
 ENV CUDA_PATH="/usr/local/cuda-11.7"
@@ -20,8 +19,9 @@ RUN apt-get update \
     && apt-get install -y \
     git gcc-12 g++-12 \
     ninja-build build-essential \
-    wget bzip2 tar\
-    libglew-dev libglm-dev libassimp-dev libglut3-dev \
+    wget bzip2 tar \
+    libglew-dev libglm-dev libassimp-dev \
+    mesa-utils libglu1-mesa-dev freeglut3-dev \
     libboost-all-dev libgtk-3-dev \
     libopencv-dev libglfw3-dev libatlas-base-dev \
     libavdevice-dev libavcodec-dev \
@@ -32,7 +32,7 @@ RUN apt-get update \
     qtbase5-dev libqt5opengl5-dev \
     libcgal-dev libcgal-qt5-dev
 
-# Install cmake
+# Install cmake for building packages and programs
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.24.4/cmake-3.24.4.tar.gz \
     && tar -xzf cmake-3.24.4.tar.gz \
     && cd cmake-3.24.4 \
@@ -40,6 +40,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.24.4/cmake-3.24.4
 
 RUN rm -rf cmake-3.24.4 && rm cmake-3.24.4.tar.gz
 
+# Install Ceres Solver
 RUN wget http://ceres-solver.org/ceres-solver-2.1.0.tar.gz \
     && tar zxf ceres-solver-2.1.0.tar.gz \
     && mkdir ceres-bin \
@@ -60,12 +61,12 @@ ENV PATH="/home/${user}/miniconda/bin:${PATH}"
 
 RUN conda init bash
 
+# Clone repository
 WORKDIR /home/${user}
 
 RUN git clone https://github.com/notingcode/gaussian-splatting.git --recursive
 
-WORKDIR /home/${user}/gaussian-splatting
-
+# Build and install COLMAP-PCD
 WORKDIR /home/${user}/gaussian-splatting/colmap-pcd
 
 RUN mkdir build \
@@ -74,6 +75,7 @@ RUN mkdir build \
     && make -j \
     && make install
 
+# Build and install SIBR viewers
 WORKDIR /home/${user}/gaussian-splatting
 
 RUN cd SIBR_viewers \
@@ -81,21 +83,19 @@ RUN cd SIBR_viewers \
     && cmake --build build -j24 --target install
 
 # Gaussian-splatting conda env setup
-
 WORKDIR /home/${user}/gaussian-splatting
 
-RUN rm -rf docker
 RUN conda install -y --file requirements_conda.txt -c pytorch -c nvidia -c defaults -c conda-forge
 RUN pip install ./submodules/diff-gaussian-rasterization
 RUN pip install ./submodules/simple-knn
 
+# Clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN rm -rf docker && rm requirements_conda.txt
 RUN pip cache purge
-RUN conda clean -a
+RUN conda clean -y -a
 
 # Reset DEBIAN_FRONTEND to default
 ENV DEBIAN_FRONTEND=dialog
-
-# Clean up
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 SHELL [ "/bin/bash", "-c" ]

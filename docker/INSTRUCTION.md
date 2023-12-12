@@ -6,7 +6,7 @@
 # Must run all commands with sudo privilege in order to give container access to GPU
 # Make sure you have 'nvidia-container-toolkit' installed on your host computer
 
-sudo docker build --build-arg user=$USER -t openpose .
+sudo docker build --build-arg user=$USER -t splat .
 ```
 
 - Check Dockerfile for build info.
@@ -15,13 +15,22 @@ sudo docker build --build-arg user=$USER -t openpose .
 
 - Follow instruction on NVIDIA's website above to install container tool assuming **Docker CLI is already installed**.
 
+## X11 Forwarding
+
+```[bash]
+# Run this shell command in host
+xhost +local:docker
+```
+
+Give Docker access to host's X server.
+
 ## Run Container
 
 ```[bash]
 # This command only runs on Linux desktop environment
 # Must run all commands with sudo privilege in order to give container access to GPU
 
-sudo docker run -it --gpus all --net=host -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix/:/tmp/.X11-unix openpose
+sudo docker run -it --gpus all --net=host -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix/:/tmp/.X11-unix splat
 ```
 
 After running the above command in Ubuntu or any Linux distros, bash shell attached to the container will be available.

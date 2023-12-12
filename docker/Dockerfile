@@ -10,7 +10,8 @@ ENV PATH="/usr/local/cuda-11.7/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda-11.7/lib64:${LD_LIBRARY_PATH}"
 ENV CUDA_PATH="/usr/local/cuda-11.7"
 ENV CUDA_HOME="/usr/local/cuda-11.7"
-ENV TORCH_CUDA_ARCH_LIST="8.0 8.6"
+# 
+ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5 8.0 8.6"
 
 # Install dependencies
 RUN apt-get update \
@@ -22,6 +23,7 @@ RUN apt-get update \
     wget bzip2 tar \
     libglew-dev libglm-dev libassimp-dev \
     mesa-utils libglu1-mesa-dev freeglut3-dev \
+    libglx-dev libglvnd-dev \
     libboost-all-dev libgtk-3-dev \
     libopencv-dev libglfw3-dev libatlas-base-dev \
     libavdevice-dev libavcodec-dev \

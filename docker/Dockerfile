@@ -74,8 +74,8 @@ RUN conda init bash
 
 WORKDIR /home/
 
-# Clone Gaussian-splatting repository
-RUN git clone https://github.com/graphdeco-inria/gaussian-splatting.git --recursive
+# Clone my Gaussian-splatting repository
+RUN git clone https://github.com/notingcode/gaussian-splatting.git --recursive
 
 # Build and install SIBR viewers
 WORKDIR /home/gaussian-splatting

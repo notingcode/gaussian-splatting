@@ -43,4 +43,4 @@ cmake --build build -j24 --target install
 
 ## SIBR Viewer Unsolved Error
 
-- When launching SIBR Viewer with interop enabled, OpenGL/CUDA interop error occurs that forces scene rendering to be done on the CPU. The solution to this problem is still not found.
+- When launching SIBR viewer with interop enabled, OpenGL/CUDA interop error occurs that forces scene rendering to be done on the CPU. The solution to this problem is still not found. Hence, when launching SIBR viewer, add option `--no-interop` in the command.

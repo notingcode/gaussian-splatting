@@ -18,7 +18,7 @@ RUN apt-get update \
     && apt-get install -y \
     git gcc-12 g++-12 \
     ninja-build build-essential x11-apps \
-    wget bzip2 tar \
+    wget bzip2 tar imagemagick \
     libglew-dev libglm-dev libassimp-dev \
     mesa-utils libglu1-mesa-dev freeglut3-dev \
     libglx-dev libglvnd-dev \

@@ -7,7 +7,7 @@ If **Docker Desktop** is installed, make sure the image is built with `sudo` pri
 Run all the following commands in the base directory of the repository
 
 ```[bash]
-sudo docker build -t splat:base docker
+sudo docker build --build-arg user=$USER --build-arg uid=$UID -t splat:base docker
 ```
 
 - Check Dockerfile for build details.
@@ -18,18 +18,16 @@ sudo docker build -t splat:base docker
 
 ### Run container without GUI support
 
-Current directory will be attached to the container as volume in /home/gaussian-splatting.
+Current directory will be attached to the container as volume in /home/${USER}/gaussian-splatting.
 
 ```[bash]
-sudo docker run -it --rm --gpus all -v .:/home/gaussian-splatting splat:base
+sudo docker run -it --rm --gpus all -v .:/home/${USER}/gaussian-splatting splat:base
 ```
 
 ### RUN with GUI support
 
 ```[bash]
-xhost +local
-
-sudo docker run -it --rm --gpus all --ipc=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/ -v .:/home/gaussian-splatting splat:base
+sudo docker run -it --rm --gpus all --ipc=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/ -v .:/home/${USER}/gaussian-splatting splat:base
 ```
 
 ### Build SIBR Viewer (Do this just once)
